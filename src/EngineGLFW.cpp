@@ -364,7 +364,6 @@ namespace ofxImGui
 	//--------------------------------------------------------------
 	void EngineGLFW::onKeyPressed(ofKeyEventArgs& event)
 	{
-		cout << "key " << event.key << endl;
 		bool needReturn = false;
 
 		needReturn |= (33 < event.key) && (event.key < 127); // Alphabet
