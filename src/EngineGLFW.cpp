@@ -8,6 +8,13 @@
 
 namespace ofxImGui
 {
+	void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (c > 0 && c < 0x10000)
+			io.AddInputCharacter((unsigned short)c);
+	}
+
 	GLuint EngineGLFW::g_FontTexture = 0;
 
 	//--------------------------------------------------------------
@@ -66,6 +73,9 @@ namespace ofxImGui
 		ofAddListener(ofEvents().mouseDragged, (BaseEngine*)this, &BaseEngine::onMouseDragged);
 		ofAddListener(ofEvents().mouseScrolled, (BaseEngine*)this, &BaseEngine::onMouseScrolled);
 		ofAddListener(ofEvents().windowResized, (BaseEngine*)this, &BaseEngine::onWindowResized);
+
+		auto ptr = static_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
+		glfwSetCharCallback(ptr->getGLFWWindow(), ImGui_ImplGlfwGL3_CharCallback);
 
 		isSetup = true;
 	}
@@ -354,6 +364,15 @@ namespace ofxImGui
 	//--------------------------------------------------------------
 	void EngineGLFW::onKeyPressed(ofKeyEventArgs& event)
 	{
+		cout << "key " << event.key << endl;
+		bool needReturn = false;
+
+		needReturn |= (33 < event.key) && (event.key < 127); // Alphabet
+		needReturn |= (event.key < 0); //japanese
+		needReturn |= event.key == OF_KEY_RETURN;
+
+		if (needReturn) return;
+
 		int key = event.keycode;
 		ImGuiIO& io = ImGui::GetIO();
 		io.KeysDown[key] = true;
